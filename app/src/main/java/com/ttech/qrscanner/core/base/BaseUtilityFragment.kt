@@ -73,8 +73,8 @@ abstract class BaseUtilityFragment<T : ViewBinding?>: BaseTemplateFragment<T>() 
         Navigation.findNavController(binding.root).popBackStack()
     }
 
-    fun navigate(action: Int? = null, navDirections: NavDirections? = null) {
-        action?.let {
+    fun navigate(resId: Int? = null, navDirections: NavDirections? = null) {
+        resId?.let {
             Navigation.findNavController(binding.root).navigate(it)
         }
         navDirections?.let {

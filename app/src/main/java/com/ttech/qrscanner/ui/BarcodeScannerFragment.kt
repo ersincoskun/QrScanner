@@ -7,6 +7,7 @@ import android.media.AudioManager
 import android.media.ToneGenerator
 import android.os.Bundle
 import android.util.DisplayMetrics
+import android.util.Patterns
 import android.view.KeyEvent
 import android.view.View
 import androidx.activity.result.ActivityResultLauncher
@@ -14,29 +15,32 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.viewModels
+import com.google.mlkit.vision.barcode.common.Barcode
 import com.ttech.qrscanner.core.base.BaseActivity
 import com.ttech.qrscanner.core.base.BaseFragment
 import com.ttech.qrscanner.core.helpers.BarcodeAnalyser
 import com.ttech.qrscanner.core.helpers.PermissionHelper
 import com.ttech.qrscanner.core.helpers.PreferencesHelper
+import com.ttech.qrscanner.data.QrCodeResultData
 import com.ttech.qrscanner.databinding.FragmentBarcodeScannerBinding
+import com.ttech.qrscanner.utils.*
 import com.ttech.qrscanner.utils.Constants.CAMERA_PERMISSION_REQUEST_CODE
-import com.ttech.qrscanner.utils.IntentUtils
-import com.ttech.qrscanner.utils.onSingleClickListener
-import com.ttech.qrscanner.utils.printErrorLog
-import com.ttech.qrscanner.utils.remove
+import com.ttech.qrscanner.viewModel.QrCodeViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import java.text.SimpleDateFormat
+import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
-
 
 @AndroidEntryPoint
 class BarcodeScannerFragment : BaseFragment<FragmentBarcodeScannerBinding>(), View.OnClickListener {
 
     @Inject
     lateinit var preferencesHelper: PreferencesHelper
+    private val viewModel: QrCodeViewModel by viewModels()
 
     private var isOpenFlash = false
     private var camera: Camera? = null
@@ -77,6 +81,18 @@ class BarcodeScannerFragment : BaseFragment<FragmentBarcodeScannerBinding>(), Vi
             }
     }
 
+    override fun subLivData() {
+        super.subLivData()
+        viewModel.insertedItemId.observe(viewLifecycleOwner) { id ->
+            id?.let { safeId ->
+                val navDirection = BarcodeScannerFragmentDirections.actionBarcodeScannerFragmentToResultFragment(safeId)
+                navigate(navDirections = navDirection)
+            } ?: kotlin.run {
+                showErrorSnackBar(binding.flFlashlightIcon, context)
+            }
+        }
+    }
+
     override fun setListeners() {
         super.setListeners()
         binding.flFlashlightIcon.onSingleClickListener(this)
@@ -84,7 +100,6 @@ class BarcodeScannerFragment : BaseFragment<FragmentBarcodeScannerBinding>(), Vi
 
     override fun prepareUI() {
         super.prepareUI()
-        //setHomeToolbar(allToolbarHide = true)
         val isFlashAvailable = requireContext().packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)
         if (!isFlashAvailable) {
             binding.flFlashlightIcon.remove()
@@ -137,16 +152,24 @@ class BarcodeScannerFragment : BaseFragment<FragmentBarcodeScannerBinding>(), Vi
         executor?.shutdown()
     }
 
-    private fun onBarcodeDetected(barcode: String?) {
-        if (barcode != null) {
+    private fun onBarcodeDetected(barcode: String?, isQr: Boolean) {
+        barcode?.let { safeBarcode ->
             if (mIsBarcodeProcessing.compareAndSet(false, true)) {
-                handleGetBarcodeId(barcode)
+                handleGetBarcodeId(safeBarcode, isQr)
+            } else {
+                showErrorSnackBar(binding.flFlashlightIcon, context)
             }
+        } ?: kotlin.run {
+            showErrorSnackBar(binding.flFlashlightIcon, context)
         }
     }
 
-    private fun handleGetBarcodeId(barcode: String) {
-
+    private fun handleGetBarcodeId(barcode: String, isQr: Boolean) {
+        val urlPattern = Patterns.WEB_URL
+        val sdf = SimpleDateFormat("dd MMM yyyy HH:mm", Locale.getDefault())
+        val currentDate = sdf.format(Date())
+        val qrCodeResultData = QrCodeResultData(barcode, false, isQr, urlPattern.matcher(barcode).matches(), currentDate)
+        viewModel.addQrCodeResultData(qrCodeResultData)
     }
 
     private fun calculateAspectRatio(width: Int, height: Int): Int {
@@ -163,7 +186,12 @@ class BarcodeScannerFragment : BaseFragment<FragmentBarcodeScannerBinding>(), Vi
                 it.setAnalyzer(it1, BarcodeAnalyser { barcode ->
                     if (!isBarcodeScanLockActive) {
                         beep()
-                        onBarcodeDetected(barcode.firstOrNull()?.rawValue)
+                        var isQr = false
+                        val firstBarcode = barcode.firstOrNull()
+                        if (firstBarcode?.format == Barcode.FORMAT_QR_CODE) {
+                            isQr = true
+                        }
+                        onBarcodeDetected(firstBarcode?.rawValue, isQr)
                     }
                 })
             }

@@ -8,7 +8,15 @@
     <fragment
         android:id="@+id/barcodeScannerFragment"
         android:name="com.ttech.qrscanner.ui.BarcodeScannerFragment"
-        android:label="@string/qr_scanner_fragment_label" />
+        android:label="@string/qr_scanner_fragment_label" >
+        <action
+            android:id="@+id/action_barcodeScannerFragment_to_resultFragment"
+            app:destination="@id/resultFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
     <fragment
         android:id="@+id/historyFragment"
         android:name="com.ttech.qrscanner.ui.HistoryFragment"
@@ -24,4 +32,13 @@
         android:name="com.ttech.qrscanner.ui.SettingsFragment"
         android:label="@string/settings_fragment_label"
         tools:layout="@layout/fragment_settings" />
+    <fragment
+        android:id="@+id/resultFragment"
+        android:name="com.ttech.qrscanner.ui.ResultFragment"
+        android:label="@string/result_fragment_label"
+        tools:layout="@layout/fragment_result" >
+        <argument
+            android:name="id"
+            app:argType="long" />
+    </fragment>
 </navigation>

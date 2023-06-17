@@ -9,8 +9,9 @@
     <string name="ok_text">Tamam</string>
 
     <!--navigation component-->
-    <string name="qr_scanner_fragment_label">QR Kod Tara</string>
+    <string name="qr_scanner_fragment_label">Kod Tara</string>
     <string name="settings_fragment_label">Ayarlar</string>
+    <string name="result_fragment_label">Tara</string>
     <string name="history_fragment_label">Geçmiş</string>
     <string name="favorites_fragment_label">Sık Kullanılanlar</string>
 
@@ -21,7 +22,6 @@
     <string name="navigation_drawer_favorites_page_item_title">Sık Kullanılanlar</string>
     <string name="navigation_drawer_open">Menü açıldı</string>
     <string name="navigation_drawer_close">Menü kapatıldı</string>
-
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
