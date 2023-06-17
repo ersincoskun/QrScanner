@@ -8,20 +8,20 @@
     <fragment
         android:id="@+id/barcodeScannerFragment"
         android:name="com.ttech.qrscanner.ui.BarcodeScannerFragment"
-        android:label="BarcodeScannerFragment" />
+        android:label="@string/qr_scanner_fragment_label" />
     <fragment
         android:id="@+id/historyFragment"
         android:name="com.ttech.qrscanner.ui.HistoryFragment"
-        android:label="fragment_history"
+        android:label="@string/history_fragment_label"
         tools:layout="@layout/fragment_history" />
     <fragment
         android:id="@+id/favoritesFragment"
         android:name="com.ttech.qrscanner.ui.FavoritesFragment"
-        android:label="fragment_favorites"
+        android:label="@string/favorites_fragment_label"
         tools:layout="@layout/fragment_favorites" />
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.ttech.qrscanner.ui.SettingsFragment"
-        android:label="fragment_settings"
+        android:label="@string/settings_fragment_label"
         tools:layout="@layout/fragment_settings" />
 </navigation>

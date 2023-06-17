@@ -14,6 +14,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
+import com.ttech.qrscanner.core.base.BaseActivity
 import com.ttech.qrscanner.core.base.BaseFragment
 import com.ttech.qrscanner.core.helpers.BarcodeAnalyser
 import com.ttech.qrscanner.core.helpers.PermissionHelper
@@ -83,7 +84,7 @@ class BarcodeScannerFragment : BaseFragment<FragmentBarcodeScannerBinding>(), Vi
 
     override fun prepareUI() {
         super.prepareUI()
-        setHomeToolbar(allToolbarHide = true)
+        //setHomeToolbar(allToolbarHide = true)
         val isFlashAvailable = requireContext().packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)
         if (!isFlashAvailable) {
             binding.flFlashlightIcon.remove()
@@ -94,7 +95,7 @@ class BarcodeScannerFragment : BaseFragment<FragmentBarcodeScannerBinding>(), Vi
         super.onStarted()
         if (!PermissionHelper.isPermissionsGranted(
                 Manifest.permission.CAMERA,
-                requireActivity()
+               requireActivity()
             )
         ) {
             PermissionHelper.requestPermissions(
@@ -205,14 +206,14 @@ class BarcodeScannerFragment : BaseFragment<FragmentBarcodeScannerBinding>(), Vi
     }
 
     private fun showPermissionDeniedDialog() {
-        val alertDialog = AlertDialog.Builder(requireContext())
+        val alertDialog = AlertDialog.Builder(activity)
             .setTitle(getString(com.ttech.qrscanner.R.string.permission_denied_dialog_title))
             .setMessage(getString(com.ttech.qrscanner.R.string.permission_denied_dialog_description))
             .setPositiveButton(
                 getString(com.ttech.qrscanner.R.string.request_permission)
             ) { dialog, _ ->
                 IntentUtils.openAppDetailSettings(
-                    requireActivity() as BaseActivity,
+                    requireActivity() as BaseActivity<*>,
                     CAMERA_PERMISSION_REQUEST_CODE
                 )
                 isCameFromPermissionSettings = true

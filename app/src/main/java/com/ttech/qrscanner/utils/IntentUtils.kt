@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
+import com.ttech.qrscanner.core.base.BaseActivity
 
 object IntentUtils {
     fun restartApp(activity: Activity) {
@@ -13,7 +14,7 @@ object IntentUtils {
         }
     }
 
-    fun openAppDetailSettings(activity: BaseActivity, requestCode: Int) {
+    fun openAppDetailSettings(activity: BaseActivity<*>, requestCode: Int) {
         try {
             Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
                 data = Uri.fromParts("package", activity.packageName, null)
@@ -24,7 +25,7 @@ object IntentUtils {
         }
     }
 
-    fun openDevelopmentSettings(activity: BaseActivity) {
+    fun openDevelopmentSettings(activity: BaseActivity<*>) {
         Intent(Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS).apply {
             flags = Intent.FLAG_ACTIVITY_NO_HISTORY
             activity.startActivity(this)

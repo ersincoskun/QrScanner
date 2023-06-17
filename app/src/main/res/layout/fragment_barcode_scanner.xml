@@ -17,8 +17,8 @@
 
     <FrameLayout
         android:id="@+id/flFlashlightIcon"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
+        android:layout_width="@dimen/_65sdp"
+        android:layout_height="@dimen/_65sdp"
         android:layout_marginBottom="@dimen/_40sdp"
         android:visibility="visible"
         android:background="@drawable/bg_circle_red_btn"
@@ -31,7 +31,7 @@
             android:id="@+id/ivFlashlightIcon"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="14dp"/>
+            android:layout_margin="@dimen/_10sdp"/>
     </FrameLayout>
 
     <View
