@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
-import com.ttech.qrscanner.core.base.BaseActivity
 
 object IntentUtils {
     fun restartApp(activity: Activity) {

@@ -14,7 +14,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
-import com.ttech.qrscanner.core.base.BaseActivity
 import com.ttech.qrscanner.core.base.BaseFragment
 import com.ttech.qrscanner.core.helpers.BarcodeAnalyser
 import com.ttech.qrscanner.core.helpers.PermissionHelper

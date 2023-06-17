@@ -1,13 +1,15 @@
 package com.ttech.qrscanner.ui
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.ttech.qrscanner.R
 import com.ttech.qrscanner.core.base.BaseActivity
+import com.ttech.qrscanner.databinding.ActivityMainBinding
 
-class MainActivity : BaseActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+class MainActivity : BaseActivity<ActivityMainBinding>() {
+
+    override fun assignObjects() {
+        super.assignObjects()
     }
+
+
 }

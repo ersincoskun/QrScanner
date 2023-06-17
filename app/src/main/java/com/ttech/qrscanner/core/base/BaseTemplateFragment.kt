@@ -24,7 +24,7 @@ open class BaseTemplateFragment<VB : ViewBinding?>:Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        mIsActivityRecreated = (activity as BaseActivity).isRecreated()
+        mIsActivityRecreated = (activity as BaseActivity<*>).isRecreated()
         vgFragmentContainer = container
         return if (mIsActivityRecreated.not()) {
             onCreated()
