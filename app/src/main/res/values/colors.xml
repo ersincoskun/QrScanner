@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <color name="transparent">#00000000 </color>
+    <color name="text_black">#111D14</color>
+    <color name="dark_gray">#767676</color>
+    <color name="dark_red">#E30A17</color>
+    <color name="green">#68D126 </color>
+    <color name="anti_flash_white">#EFF1F3 </color>
+    <color name="light_red">#FF5858 </color>
+    <color name="lavender_gray">#C2C2CA</color>
+    <color name="light_gray">#C2C3CA</color>
+    <color name="et_bg_color">#F3F3F3</color>
+    <color name="black_50_alpha">#80000000</color>
+    <color name="hint_text_color">#B3111D14</color>
+    <color name="text_input_layout_error_red">#FF5858</color>
+    <color name="dark_jungle_green">#122617</color>
+    <color name="mtrl_textinput_default_box_stroke_color">#1A000000</color>
+    <color name="campaign_detail_shield_bg_color">#66FFFFFF</color>
+</resources>

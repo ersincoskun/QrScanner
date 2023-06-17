@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="marker_width">69dp</dimen>
+    <dimen name="marker_height">59dp</dimen>
+    <dimen name="rv_margin_top">90dp</dimen>
+
+</resources>
