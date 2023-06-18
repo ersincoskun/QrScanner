@@ -85,9 +85,16 @@ class ResultFragment : BaseFragment<FragmentResultBinding>(), View.OnClickListen
     override fun onClick(p0: View?) {
         when (p0) {
             binding.ivAddFavorite -> {
-                if (isFavorite) binding.ivAddFavorite.setImageResource(R.drawable.star_empty_icon)
-                else binding.ivAddFavorite.setImageResource(R.drawable.star_filled_icon)
-                isFavorite = !isFavorite
+                arguments?.getLong("id")?.let { safeId ->
+                    if (isFavorite) binding.ivAddFavorite.setImageResource(R.drawable.star_empty_icon)
+                    else binding.ivAddFavorite.setImageResource(R.drawable.star_filled_icon)
+                    viewModel.updateIsFavorite(safeId, !isFavorite)
+                    isFavorite = !isFavorite
+                } ?: kotlin.run {
+                    printErrorLog("id from scanner null")
+                    showErrorSnackBar(binding.ivQrResultLogo, context)
+                }
+
             }
         }
     }

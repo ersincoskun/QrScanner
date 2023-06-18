@@ -23,4 +23,7 @@ interface QrCodeResultDao {
 
     @Query("DELETE FROM qrCodeResultDb")
     suspend fun deleteAllQrCodeResultData()
+
+    @Query("UPDATE qrCodeResultDb SET isFavorite = :isFavorite WHERE primaryId = :id")
+    suspend fun updateIsFavorite(id: Long, isFavorite: Boolean)
 }

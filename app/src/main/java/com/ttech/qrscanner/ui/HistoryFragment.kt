@@ -33,8 +33,10 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>() {
             } ?: kotlin.run {
                 showErrorSnackBar(binding.rvHistory, context)
             }
-        }) { favoriteItemId ->
-
+        }) { favoriteItemId, isFavorite ->
+            favoriteItemId?.let {safeFavoriteItemId->
+                viewModel.updateIsFavorite(safeFavoriteItemId, !isFavorite)
+            }
         }
     }
 

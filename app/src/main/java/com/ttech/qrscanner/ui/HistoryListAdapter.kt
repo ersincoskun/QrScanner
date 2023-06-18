@@ -11,7 +11,7 @@ import com.ttech.qrscanner.data.QrCodeResultData
 import com.ttech.qrscanner.databinding.ItemQrResultListBinding
 import com.ttech.qrscanner.utils.onSingleClickListener
 
-class HistoryListAdapter(private val context: Context, private val rootItemClick: (Long?) -> Unit, private val favoriteButtonClick: (Long?) -> Unit) :
+class HistoryListAdapter(private val context: Context, private val rootItemClick: (Long?) -> Unit, private val favoriteButtonClick: (Long?,Boolean) -> Unit) :
     ListAdapter<QrCodeResultData, HistoryListAdapter.HistoryListViewHolder>(HistoryListDiffUtil()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HistoryListViewHolder {
         return HistoryListViewHolder(
@@ -48,6 +48,15 @@ class HistoryListAdapter(private val context: Context, private val rootItemClick
             llItemQrResultRoot.onSingleClickListener {
                 rootItemClick(item.primaryId)
             }
+            if (item.isFavorite) ivAddFavorite.setImageResource(R.drawable.star_filled_icon)
+            else ivAddFavorite.setImageResource(R.drawable.star_empty_icon)
+            ivAddFavorite.onSingleClickListener {
+                if (item.isFavorite) ivAddFavorite.setImageResource(R.drawable.star_empty_icon)
+                else ivAddFavorite.setImageResource(R.drawable.star_filled_icon)
+                favoriteButtonClick.invoke(item.primaryId,item.isFavorite)
+                item.isFavorite = !item.isFavorite
+            }
+
         }
 
     class HistoryListViewHolder(val binding: ItemQrResultListBinding) :

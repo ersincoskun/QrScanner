@@ -8,7 +8,6 @@ import com.ttech.qrscanner.data.QrCodeResultData
 import com.ttech.qrscanner.storage.dao.QrCodeResultDao
 import com.ttech.qrscanner.utils.SingleLiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -48,7 +47,7 @@ class QrCodeViewModel @Inject constructor(
     }
 
     fun deleteQrCodeResultDataById(id: Long) {
-        viewModelScope.launch{
+        viewModelScope.launch {
             qrCodeResultDao.deleteQrCodeResultDataById(id)
         }
     }
@@ -56,6 +55,12 @@ class QrCodeViewModel @Inject constructor(
     fun deleteAllQrCodeResultData() {
         viewModelScope.launch {
             qrCodeResultDao.deleteAllQrCodeResultData()
+        }
+    }
+
+    fun updateIsFavorite(itemId: Long, isFavorite: Boolean) {
+        viewModelScope.launch {
+            qrCodeResultDao.updateIsFavorite(itemId, isFavorite)
         }
     }
 
