@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ttech.qrscanner.data.QrCodeResultData
 import com.ttech.qrscanner.storage.dao.QrCodeResultDao
+import com.ttech.qrscanner.utils.SingleLiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -24,36 +25,36 @@ class QrCodeViewModel @Inject constructor(
     val qrCodeResultDataList: LiveData<List<QrCodeResultData>?>
         get() = _qrCodeResultDataList
 
-    private val _insertedItemId = MutableLiveData<Long?>()
+    private val _insertedItemId = SingleLiveEvent<Long?>()
     val insertedItemId: LiveData<Long?>
         get() = _insertedItemId
 
     fun addQrCodeResultData(qrCodeResultData: QrCodeResultData) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             _insertedItemId.value = qrCodeResultDao.insertQrCodeResultData(qrCodeResultData)
         }
     }
 
     fun getQrCodeResultDataById(id: Long) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             _qrCodeResultData.value = qrCodeResultDao.getQrCodeResultDataById(id)
         }
     }
 
     fun getAllQrCodeResultData() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             _qrCodeResultDataList.value = qrCodeResultDao.getAllQrCodeResultData()
         }
     }
 
     fun deleteQrCodeResultDataById(id: Long) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch{
             qrCodeResultDao.deleteQrCodeResultDataById(id)
         }
     }
 
     fun deleteAllQrCodeResultData() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             qrCodeResultDao.deleteAllQrCodeResultData()
         }
     }

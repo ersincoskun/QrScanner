@@ -5,7 +5,9 @@ import android.app.AlertDialog
 import android.content.pm.PackageManager
 import android.media.AudioManager
 import android.media.ToneGenerator
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.DisplayMetrics
 import android.util.Patterns
 import android.view.KeyEvent
@@ -16,7 +18,9 @@ import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
+import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
+import com.google.mlkit.vision.common.InputImage
 import com.ttech.qrscanner.core.base.BaseActivity
 import com.ttech.qrscanner.core.base.BaseFragment
 import com.ttech.qrscanner.core.helpers.BarcodeAnalyser
@@ -38,6 +42,11 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class BarcodeScannerFragment : BaseFragment<FragmentBarcodeScannerBinding>(), View.OnClickListener {
 
+    companion object {
+        private const val RATIO_4_3_VALUE = 4.0 / 3.0
+        private const val RATIO_16_9_VALUE = 16.0 / 9.0
+    }
+
     @Inject
     lateinit var preferencesHelper: PreferencesHelper
     private val viewModel: QrCodeViewModel by viewModels()
@@ -45,22 +54,6 @@ class BarcodeScannerFragment : BaseFragment<FragmentBarcodeScannerBinding>(), Vi
     private var isOpenFlash = false
     private var camera: Camera? = null
     private var isCameFromPermissionSettings = false
-    private var isBarcodeScanLockActive = false
-
-    companion object {
-        private const val RATIO_4_3_VALUE = 4.0 / 3.0
-        private const val RATIO_16_9_VALUE = 16.0 / 9.0
-        const val BARCODE_SCANNER_CAME_FROM = "BARCODE_SCANNER_CAME_FROM"
-        fun newInstance(
-            barcodeScannerCameFrom: String
-        ): BarcodeScannerFragment {
-            return BarcodeScannerFragment().apply {
-                arguments = Bundle().apply {
-                    putString(BARCODE_SCANNER_CAME_FROM, barcodeScannerCameFrom)
-                }
-            }
-        }
-    }
 
     private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
     private var executor: ExecutorService? = null
@@ -68,6 +61,7 @@ class BarcodeScannerFragment : BaseFragment<FragmentBarcodeScannerBinding>(), Vi
 
     override fun assignObjects() {
         super.assignObjects()
+        mIsBarcodeProcessing.compareAndSet(true, false)
         executor = Executors.newSingleThreadExecutor()
         requestPermissionLauncher =
             registerForActivityResult(
@@ -88,6 +82,7 @@ class BarcodeScannerFragment : BaseFragment<FragmentBarcodeScannerBinding>(), Vi
                 val navDirection = BarcodeScannerFragmentDirections.actionBarcodeScannerFragmentToResultFragment(safeId)
                 navigate(navDirections = navDirection)
             } ?: kotlin.run {
+                printErrorLog("add barcode return id null")
                 showErrorSnackBar(binding.flFlashlightIcon, context)
             }
         }
@@ -155,11 +150,11 @@ class BarcodeScannerFragment : BaseFragment<FragmentBarcodeScannerBinding>(), Vi
     private fun onBarcodeDetected(barcode: String?, isQr: Boolean) {
         barcode?.let { safeBarcode ->
             if (mIsBarcodeProcessing.compareAndSet(false, true)) {
+                beep()
                 handleGetBarcodeId(safeBarcode, isQr)
-            } else {
-                showErrorSnackBar(binding.flFlashlightIcon, context)
             }
         } ?: kotlin.run {
+            printErrorLog("barcode null from onBarcodeDetected")
             showErrorSnackBar(binding.flFlashlightIcon, context)
         }
     }
@@ -184,15 +179,13 @@ class BarcodeScannerFragment : BaseFragment<FragmentBarcodeScannerBinding>(), Vi
         return ImageAnalysis.Builder().setTargetAspectRatio(screenAspectRatio).setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST).setTargetRotation(rotation).build().also {
             executor?.let { it1 ->
                 it.setAnalyzer(it1, BarcodeAnalyser { barcode ->
-                    if (!isBarcodeScanLockActive) {
-                        beep()
+
                         var isQr = false
                         val firstBarcode = barcode.firstOrNull()
                         if (firstBarcode?.format == Barcode.FORMAT_QR_CODE) {
                             isQr = true
                         }
                         onBarcodeDetected(firstBarcode?.rawValue, isQr)
-                    }
                 })
             }
         }
@@ -278,5 +271,27 @@ class BarcodeScannerFragment : BaseFragment<FragmentBarcodeScannerBinding>(), Vi
                 binding.ivFlashlightIcon.setBackgroundResource(com.ttech.qrscanner.R.drawable.flashlight_off_icon)
             }
         }
+    }
+
+    fun analyzePhoto(uri: Uri) {
+        val bitmap = MediaStore.Images.Media.getBitmap(requireActivity().contentResolver, uri)
+
+        val image = InputImage.fromBitmap(bitmap, 0)
+
+        val scanner = BarcodeScanning.getClient()
+
+        scanner.process(image)
+            .addOnSuccessListener { barcodes ->
+                var isQr = false
+                val firstBarcode = barcodes.firstOrNull()
+                if (firstBarcode?.format == Barcode.FORMAT_QR_CODE) {
+                    isQr = true
+                }
+                onBarcodeDetected(firstBarcode?.rawValue, isQr)
+            }
+            .addOnFailureListener {
+                printErrorLog("scanner failure: $it")
+                showErrorSnackBar(binding.flFlashlightIcon, context)
+            }
     }
 }

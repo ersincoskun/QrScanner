@@ -27,7 +27,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
     override fun onLayoutReady() {
         super.onLayoutReady()
-        val appBarConfiguration = AppBarConfiguration(setOf(R.id.barcodeScannerFragment, R.id.historyFragment, R.id.favoritesFragment, R.id.settingsFragment),binding.drawerLayout)
+        val appBarConfiguration = AppBarConfiguration(setOf(R.id.barcodeScannerFragment, R.id.historyFragment, R.id.favoritesFragment, R.id.settingsFragment,R.id.resultFragment),binding.drawerLayout)
         binding.toolbar.setupWithNavController(navController,appBarConfiguration)
         binding.navView.setupWithNavController(navController)
 
