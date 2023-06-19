@@ -96,18 +96,15 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>() {
                     return
                 }
 
-                // Draw the red delete background
                 background.setBounds(itemView.right + dX.toInt(), itemView.top, itemView.right, itemView.bottom)
                 background.draw(c)
 
-                // Calculate position of delete icon
                 val deleteIconTop = itemView.top + (itemHeight - intrinsicHeight) / 2
                 val deleteIconMargin = (itemHeight - intrinsicHeight) / 2
                 val deleteIconLeft = itemView.right - deleteIconMargin - intrinsicWidth
                 val deleteIconRight = itemView.right - deleteIconMargin
                 val deleteIconBottom = deleteIconTop + intrinsicHeight
 
-                // Draw the delete icon
                 deleteIcon?.setBounds(deleteIconLeft, deleteIconTop, deleteIconRight, deleteIconBottom)
                 deleteIcon?.draw(c)
 
