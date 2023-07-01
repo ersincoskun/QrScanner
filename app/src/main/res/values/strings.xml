@@ -34,4 +34,7 @@
     <string name="settings_fragment_vibrator_enable_label">Titreşim Aç/Kapa</string>
     <string name="settings_fragment_auto_web_open_enable_label">Otomatik Web Sayfası Açılma Aç/Kapa</string>
 
+    <!--barcodeScannerFragment-->
+    <string name="barcode_scanner_fragment_select_picture">Resim Seç</string>
+
 </resources>

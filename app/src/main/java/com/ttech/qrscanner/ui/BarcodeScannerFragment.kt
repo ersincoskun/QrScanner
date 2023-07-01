@@ -1,9 +1,12 @@
 package com.ttech.qrscanner.ui
 
 import android.Manifest
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.media.AudioManager
 import android.media.ToneGenerator
 import android.net.Uri
@@ -33,14 +36,17 @@ import com.ttech.qrscanner.data.QrCodeResultData
 import com.ttech.qrscanner.databinding.FragmentBarcodeScannerBinding
 import com.ttech.qrscanner.utils.*
 import com.ttech.qrscanner.utils.Constants.CAMERA_PERMISSION_REQUEST_CODE
+import com.ttech.qrscanner.utils.Constants.SELECT_IMAGE_REQUEST_CODE
 import com.ttech.qrscanner.viewModel.QrCodeViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class BarcodeScannerFragment : BaseFragment<FragmentBarcodeScannerBinding>(), View.OnClickListener {
@@ -62,7 +68,7 @@ class BarcodeScannerFragment : BaseFragment<FragmentBarcodeScannerBinding>(), Vi
     private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
     private var executor: ExecutorService? = null
     private var mIsBarcodeProcessing = AtomicBoolean(false)
-    private var isWebUrl = false
+    private var webUrl: String? = null
 
     override fun assignObjects() {
         super.assignObjects()
@@ -87,23 +93,28 @@ class BarcodeScannerFragment : BaseFragment<FragmentBarcodeScannerBinding>(), Vi
             id?.let { safeId ->
                 val navDirection = BarcodeScannerFragmentDirections.actionBarcodeScannerFragmentToResultFragment(safeId)
                 navigate(navDirections = navDirection)
+                if (webUrl != null && preferencesHelper.isAutoOpenWebEnable) {
+                    val i = Intent(Intent.ACTION_VIEW)
+                    i.data = Uri.parse(webUrl)
+                    startActivity(i)
+                }
             } ?: kotlin.run {
                 printErrorLog("add barcode return id null")
-                showErrorSnackBar(binding.flFlashlightIcon, context)
+                showErrorSnackBar(binding.ivFlashlightIcon, context)
             }
         }
     }
 
     override fun setListeners() {
         super.setListeners()
-        binding.flFlashlightIcon.onSingleClickListener(this)
+        binding.ivFlashlightIcon.onSingleClickListener(this)
     }
 
     override fun prepareUI() {
         super.prepareUI()
         val isFlashAvailable = requireContext().packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)
         if (!isFlashAvailable) {
-            binding.flFlashlightIcon.remove()
+            binding.ivFlashlightIcon.remove()
         }
     }
 
@@ -135,7 +146,7 @@ class BarcodeScannerFragment : BaseFragment<FragmentBarcodeScannerBinding>(), Vi
 
     override fun onClick(p0: View?) {
         when (p0) {
-            binding.flFlashlightIcon -> {
+            binding.ivFlashlightIcon -> {
                 if (isOpenFlash) {
                     binding.ivFlashlightIcon.setBackgroundResource(com.ttech.qrscanner.R.drawable.flashlight_on_icon)
                     turnOnOffFlash()
@@ -145,12 +156,34 @@ class BarcodeScannerFragment : BaseFragment<FragmentBarcodeScannerBinding>(), Vi
                 }
                 isOpenFlash = !isOpenFlash
             }
+
+            binding.ivSelectPicture -> {
+                goToGallery()
+            }
         }
     }
 
     override fun onDestroyed() {
         super.onDestroyed()
         executor?.shutdown()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            SELECT_IMAGE_REQUEST_CODE -> {
+                if (resultCode === Activity.RESULT_OK) {
+                    if (data != null) {
+                        try {
+                            val bitmap: Bitmap = MediaStore.Images.Media.getBitmap(requireActivity().contentResolver, data.data)
+                            analyzePhoto(bitmap)
+                        } catch (e: IOException) {
+                            e.printStackTrace()
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private fun onBarcodeDetected(barcode: String?, isQr: Boolean) {
@@ -162,7 +195,7 @@ class BarcodeScannerFragment : BaseFragment<FragmentBarcodeScannerBinding>(), Vi
             }
         } ?: kotlin.run {
             printErrorLog("barcode null from onBarcodeDetected")
-            showErrorSnackBar(binding.flFlashlightIcon, context)
+            showErrorSnackBar(binding.ivFlashlightIcon, context)
         }
     }
 
@@ -171,6 +204,11 @@ class BarcodeScannerFragment : BaseFragment<FragmentBarcodeScannerBinding>(), Vi
         val sdf = SimpleDateFormat("dd MMM yyyy HH:mm", Locale.getDefault())
         val currentDate = sdf.format(Date())
         val isWebUrl = urlPattern.matcher(barcode).matches()
+        webUrl = if (isWebUrl) {
+            barcode
+        } else {
+            null
+        }
         val qrCodeResultData = QrCodeResultData(barcode, false, isQr, isWebUrl, currentDate)
         viewModel.addQrCodeResultData(qrCodeResultData)
     }
@@ -281,8 +319,7 @@ class BarcodeScannerFragment : BaseFragment<FragmentBarcodeScannerBinding>(), Vi
         }
     }
 
-    fun analyzePhoto(uri: Uri) {
-        val bitmap = MediaStore.Images.Media.getBitmap(requireActivity().contentResolver, uri)
+    private fun analyzePhoto(bitmap: Bitmap) {
 
         val image = InputImage.fromBitmap(bitmap, 0)
 
@@ -299,7 +336,7 @@ class BarcodeScannerFragment : BaseFragment<FragmentBarcodeScannerBinding>(), Vi
             }
             .addOnFailureListener {
                 printErrorLog("scanner failure: $it")
-                showErrorSnackBar(binding.flFlashlightIcon, context)
+                showErrorSnackBar(binding.ivFlashlightIcon, context)
             }
     }
 
@@ -310,6 +347,13 @@ class BarcodeScannerFragment : BaseFragment<FragmentBarcodeScannerBinding>(), Vi
             @Suppress("DEPRECATION")
             vibrator.vibrate(500)
         }
+    }
+
+    private fun goToGallery() {
+        val intent = Intent()
+        intent.type = "image/*"
+        intent.action = Intent.ACTION_GET_CONTENT
+        startActivityForResult(Intent.createChooser(intent, getString(com.ttech.qrscanner.R.string.barcode_scanner_fragment_select_picture)), SELECT_IMAGE_REQUEST_CODE)
     }
 
 }
