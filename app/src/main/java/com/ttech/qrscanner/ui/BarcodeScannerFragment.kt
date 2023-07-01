@@ -2,11 +2,14 @@ package com.ttech.qrscanner.ui
 
 import android.Manifest
 import android.app.AlertDialog
+import android.content.Context
 import android.content.pm.PackageManager
 import android.media.AudioManager
 import android.media.ToneGenerator
 import android.net.Uri
-import android.os.Bundle
+import android.os.Build
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.provider.MediaStore
 import android.util.DisplayMetrics
 import android.util.Patterns
@@ -54,15 +57,18 @@ class BarcodeScannerFragment : BaseFragment<FragmentBarcodeScannerBinding>(), Vi
     private var isOpenFlash = false
     private var camera: Camera? = null
     private var isCameFromPermissionSettings = false
+    private lateinit var vibrator: Vibrator
 
     private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
     private var executor: ExecutorService? = null
     private var mIsBarcodeProcessing = AtomicBoolean(false)
+    private var isWebUrl = false
 
     override fun assignObjects() {
         super.assignObjects()
         mIsBarcodeProcessing.compareAndSet(true, false)
         executor = Executors.newSingleThreadExecutor()
+        vibrator = requireContext().getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         requestPermissionLauncher =
             registerForActivityResult(
                 ActivityResultContracts.RequestPermission()
@@ -150,7 +156,8 @@ class BarcodeScannerFragment : BaseFragment<FragmentBarcodeScannerBinding>(), Vi
     private fun onBarcodeDetected(barcode: String?, isQr: Boolean) {
         barcode?.let { safeBarcode ->
             if (mIsBarcodeProcessing.compareAndSet(false, true)) {
-                beep()
+                if (preferencesHelper.isBeepEnable) beep()
+                if (preferencesHelper.isVibratorEnable) vibrateDevice()
                 handleGetBarcodeId(safeBarcode, isQr)
             }
         } ?: kotlin.run {
@@ -163,7 +170,8 @@ class BarcodeScannerFragment : BaseFragment<FragmentBarcodeScannerBinding>(), Vi
         val urlPattern = Patterns.WEB_URL
         val sdf = SimpleDateFormat("dd MMM yyyy HH:mm", Locale.getDefault())
         val currentDate = sdf.format(Date())
-        val qrCodeResultData = QrCodeResultData(barcode, false, isQr, urlPattern.matcher(barcode).matches(), currentDate)
+        val isWebUrl = urlPattern.matcher(barcode).matches()
+        val qrCodeResultData = QrCodeResultData(barcode, false, isQr, isWebUrl, currentDate)
         viewModel.addQrCodeResultData(qrCodeResultData)
     }
 
@@ -294,4 +302,14 @@ class BarcodeScannerFragment : BaseFragment<FragmentBarcodeScannerBinding>(), Vi
                 showErrorSnackBar(binding.flFlashlightIcon, context)
             }
     }
+
+    private fun vibrateDevice() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            vibrator.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE))
+        } else {
+            @Suppress("DEPRECATION")
+            vibrator.vibrate(500)
+        }
+    }
+
 }

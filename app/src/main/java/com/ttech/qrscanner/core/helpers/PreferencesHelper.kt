@@ -6,12 +6,14 @@ import com.ttech.qrscanner.utils.Constants.PREF_NAME
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
-class PreferencesHelper @Inject constructor(@ApplicationContext var context: Context) {
+class PreferencesHelper @Inject constructor(@ApplicationContext private var context: Context) {
 
     private var sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
 
     companion object {
-        const val MEMBER_TOKEN = "memberToken"
+        const val IS_VIBRATOR_ENABLE = "IS_VIBRATOR_ENABLE"
+        const val IS_BEEP_ENABLE = "IS_BEEP_ENABLE"
+        const val IS_AUTO_OPEN_WEB_ENABLE = "IS_AUTO_OPEN_WEB_ENABLE"
     }
 
     private fun getSharedPrefsValue(
@@ -60,8 +62,16 @@ class PreferencesHelper @Inject constructor(@ApplicationContext var context: Con
         editor.remove(key).apply()
     }
 
-    /*  var isCameFromReserve: Boolean
-          get() = getSharedPrefsValue(IS_CAME_FROM_RESERVE, Boolean::class.java) as Boolean
-          set(value) = savePrefValue(IS_CAME_FROM_RESERVE, value)*/
+    var isVibratorEnable: Boolean
+        get() = getSharedPrefsValue(IS_VIBRATOR_ENABLE, Boolean::class.java) as Boolean
+        set(value) = savePrefValue(IS_VIBRATOR_ENABLE, value)
+
+    var isBeepEnable: Boolean
+        get() = getSharedPrefsValue(IS_BEEP_ENABLE, Boolean::class.java) as Boolean
+        set(value) = savePrefValue(IS_BEEP_ENABLE, value)
+
+    var isAutoOpenWebEnable: Boolean
+        get() = getSharedPrefsValue(IS_AUTO_OPEN_WEB_ENABLE, Boolean::class.java) as Boolean
+        set(value) = savePrefValue(IS_AUTO_OPEN_WEB_ENABLE, value)
 
 }
