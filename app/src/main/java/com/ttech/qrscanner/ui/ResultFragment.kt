@@ -10,9 +10,7 @@ import androidx.fragment.app.viewModels
 import com.ttech.qrscanner.R
 import com.ttech.qrscanner.core.base.BaseFragment
 import com.ttech.qrscanner.databinding.FragmentResultBinding
-import com.ttech.qrscanner.utils.onSingleClickListener
-import com.ttech.qrscanner.utils.printErrorLog
-import com.ttech.qrscanner.utils.showErrorSnackBar
+import com.ttech.qrscanner.utils.*
 import com.ttech.qrscanner.viewModel.QrCodeViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -21,6 +19,7 @@ class ResultFragment : BaseFragment<FragmentResultBinding>(), View.OnClickListen
 
     private val viewModel: QrCodeViewModel by viewModels()
     private var isFavorite: Boolean = false
+    private var resultText: String? = null
 
     override fun subLivData() {
         super.subLivData()
@@ -31,6 +30,8 @@ class ResultFragment : BaseFragment<FragmentResultBinding>(), View.OnClickListen
                     tvQrResultDate.text = safeQrCodeResultData.date
                     when {
                         safeQrCodeResultData.isUrl -> {
+                            resultText = safeQrCodeResultData.result
+                            binding.ivOpenInBrowserIcon.show()
                             tvQrResultType.text = getString(R.string.result_fragment_url_type_text)
                             ivQrResultLogo.setImageResource(R.drawable.link_icon)
                             tvQrResultData.movementMethod = LinkMovementMethod.getInstance()
@@ -44,11 +45,13 @@ class ResultFragment : BaseFragment<FragmentResultBinding>(), View.OnClickListen
                         }
 
                         safeQrCodeResultData.isQr -> {
+                            binding.ivOpenInBrowserIcon.remove()
                             ivQrResultLogo.setImageResource(R.drawable.qr_scan_icon)
                             tvQrResultType.text = getString(R.string.result_fragment_qr_type_text)
                         }
 
                         else -> {
+                            binding.ivOpenInBrowserIcon.remove()
                             ivQrResultLogo.setImageResource(R.drawable.go_gallery_icon)
                             tvQrResultType.text = getString(R.string.result_fragment_barcode_type_text)
                         }
@@ -70,6 +73,8 @@ class ResultFragment : BaseFragment<FragmentResultBinding>(), View.OnClickListen
     override fun setListeners() {
         super.setListeners()
         binding.ivAddFavorite.onSingleClickListener(this)
+        binding.ivOpenInBrowserIcon.onSingleClickListener(this)
+        binding.ivShareIcon.onSingleClickListener(this)
     }
 
     override fun onLayoutReady() {
@@ -94,9 +99,37 @@ class ResultFragment : BaseFragment<FragmentResultBinding>(), View.OnClickListen
                     printErrorLog("id from scanner null")
                     showErrorSnackBar(binding.ivQrResultLogo, context)
                 }
+            }
 
+            binding.ivOpenInBrowserIcon -> {
+                resultText?.let { safeUrl ->
+                    val intent = Intent(Intent.ACTION_VIEW)
+                    intent.data = Uri.parse(safeUrl)
+                    startActivity(intent)
+                } ?: kotlin.run {
+                    showErrorSnackBar(binding.ivQrResultLogo, context)
+                }
+            }
+
+            binding.ivShareIcon -> {
+                resultText?.let { safeText ->
+                    share(safeText)
+                } ?: kotlin.run {
+                    showErrorSnackBar(binding.ivQrResultLogo, context)
+                }
             }
         }
+    }
+
+    private fun share(text: String) {
+        val sendIntent: Intent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, text)
+            type = "text/plain"
+        }
+
+        val shareIntent = Intent.createChooser(sendIntent, null)
+        startActivity(shareIntent)
     }
 
 }
