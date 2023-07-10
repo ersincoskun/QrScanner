@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.ttech.qrscanner.R
 import com.ttech.qrscanner.core.base.BaseFragment
+import com.ttech.qrscanner.core.manager.BannerAdManager
 import com.ttech.qrscanner.data.QrCodeResultData
 import com.ttech.qrscanner.databinding.FragmentHistoryBinding
 import com.ttech.qrscanner.utils.showErrorSnackBar
@@ -61,6 +62,7 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>() {
         super.onLayoutReady()
         setSwipeToDelete()
         viewModel.getAllQrCodeResultData()
+        BannerAdManager.loadBannerAd(binding.adViewHistoryPage)
     }
 
     private fun setSwipeToDelete() {

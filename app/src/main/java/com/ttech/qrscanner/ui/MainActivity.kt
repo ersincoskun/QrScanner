@@ -1,15 +1,13 @@
 package com.ttech.qrscanner.ui
 
-import android.view.MenuItem
 import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.core.view.GravityCompat
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.onNavDestinationSelected
 import androidx.navigation.ui.setupWithNavController
 import com.ttech.qrscanner.R
 import com.ttech.qrscanner.core.base.BaseActivity
+import com.ttech.qrscanner.core.manager.AppOpenAdManager
 import com.ttech.qrscanner.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -38,5 +36,11 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         )
         binding.drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
+    }
+
+    override fun onResumed() {
+        super.onResumed()
+        AppOpenAdManager.loadAd(this)
+        AppOpenAdManager.showAdIfAvailable(this)
     }
 }

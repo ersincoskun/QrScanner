@@ -4,6 +4,11 @@ import android.app.Activity
 import android.content.Context
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.LoadAdError
+import com.google.android.gms.ads.interstitial.InterstitialAd
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
+import com.ttech.qrscanner.core.manager.InterstitialAdManager
 
 fun View.onSingleClickListener(listener: View.OnClickListener) {
     this.setOnClickListener(object : OnSingleClickListener() {

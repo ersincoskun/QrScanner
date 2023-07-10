@@ -30,8 +30,7 @@
             android:layout_height="@dimen/_40sdp"
             android:src="@drawable/go_gallery_icon"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:tint="@color/white" />
+            app:layout_constraintStart_toStartOf="parent" />
 
     </LinearLayout>
 
@@ -104,4 +103,17 @@
         app:layout_constraintStart_toEndOf="@+id/img_qr_box"
         app:layout_constraintTop_toTopOf="parent"
         tools:visibility="invisible" />
+
+    <com.google.android.gms.ads.AdView
+        xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/adViewBarcodeScannerPage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        ads:adSize="BANNER"
+        ads:layout_constraintBottom_toBottomOf="parent"
+        ads:layout_constraintStart_toStartOf="parent"
+        ads:layout_constraintEnd_toEndOf="parent"
+        ads:adUnitId="ca-app-pub-6126124107542425/6933376027">
+    </com.google.android.gms.ads.AdView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

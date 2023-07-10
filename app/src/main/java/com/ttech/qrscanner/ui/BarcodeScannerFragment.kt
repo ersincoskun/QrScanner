@@ -32,6 +32,8 @@ import com.ttech.qrscanner.core.base.BaseFragment
 import com.ttech.qrscanner.core.helpers.BarcodeAnalyser
 import com.ttech.qrscanner.core.helpers.PermissionHelper
 import com.ttech.qrscanner.core.helpers.PreferencesHelper
+import com.ttech.qrscanner.core.manager.BannerAdManager
+import com.ttech.qrscanner.core.manager.InterstitialAdManager
 import com.ttech.qrscanner.data.QrCodeResultData
 import com.ttech.qrscanner.databinding.FragmentBarcodeScannerBinding
 import com.ttech.qrscanner.utils.*
@@ -107,6 +109,7 @@ class BarcodeScannerFragment : BaseFragment<FragmentBarcodeScannerBinding>(), Vi
 
     override fun setListeners() {
         super.setListeners()
+        binding.ivSelectPicture.onSingleClickListener(this)
         binding.ivFlashlightIcon.onSingleClickListener(this)
     }
 
@@ -133,6 +136,7 @@ class BarcodeScannerFragment : BaseFragment<FragmentBarcodeScannerBinding>(), Vi
             if (isCameFromPermissionSettings) initCamera()
         }
         setFlashState()
+
     }
 
     override fun onLayoutReady() {
@@ -142,6 +146,8 @@ class BarcodeScannerFragment : BaseFragment<FragmentBarcodeScannerBinding>(), Vi
                 requireActivity()
             )
         ) initCamera()
+        if (InterstitialAdManager.interstitialAd == null) InterstitialAdManager.loadInterstitialAd(context)
+        BannerAdManager.loadBannerAd(binding.adViewBarcodeScannerPage)
     }
 
     override fun onClick(p0: View?) {

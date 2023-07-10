@@ -2,6 +2,7 @@ package com.ttech.qrscanner.ui
 
 import com.ttech.qrscanner.core.base.BaseFragment
 import com.ttech.qrscanner.core.helpers.PreferencesHelper
+import com.ttech.qrscanner.core.manager.BannerAdManager
 import com.ttech.qrscanner.databinding.FragmentSettingsBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -33,6 +34,11 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
                 preferencesHelper.isAutoOpenWebEnable = b
             }
         }
+    }
+
+    override fun onLayoutReady() {
+        super.onLayoutReady()
+        BannerAdManager.loadBannerAd(binding.adViewSettingsPage)
     }
 
 }

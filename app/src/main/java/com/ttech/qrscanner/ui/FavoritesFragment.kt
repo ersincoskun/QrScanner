@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.ttech.qrscanner.R
 import com.ttech.qrscanner.core.base.BaseFragment
+import com.ttech.qrscanner.core.manager.BannerAdManager
 import com.ttech.qrscanner.data.QrCodeResultData
 import com.ttech.qrscanner.databinding.FragmentFavoritesBinding
 import com.ttech.qrscanner.utils.showErrorSnackBar
@@ -28,7 +29,7 @@ class FavoritesFragment : BaseFragment<FragmentFavoritesBinding>() {
         super.assignObjects()
         favoriteListAdapter = FavoriteListAdapter(requireContext()) { itemId ->
             itemId?.let { safeItemId ->
-                val navDirection = HistoryFragmentDirections.actionHistoryFragmentToResultFragment(safeItemId)
+                val navDirection = FavoritesFragmentDirections.actionFavoritesFragmentToResultFragment(safeItemId)
                 navigate(navDirections = navDirection)
             } ?: kotlin.run {
                 showErrorSnackBar(binding.rvFavorites, context)
@@ -58,6 +59,7 @@ class FavoritesFragment : BaseFragment<FragmentFavoritesBinding>() {
         super.onLayoutReady()
         setSwipeToDelete()
         viewModel.getAllQrCodeResultData()
+        BannerAdManager.loadBannerAd(binding.adViewFavoritesPage)
     }
 
     private fun setSwipeToDelete() {
