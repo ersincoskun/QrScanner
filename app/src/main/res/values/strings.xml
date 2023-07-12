@@ -1,40 +1,42 @@
 <resources>
-    <string name="app_name">qr_scanner</string>
-    <string name="default_error_text">Bir hata meydana geldi</string>
+    <string name="app_name">QR and Barcode Scanner</string>
+    <string name="default_error_text">An error has occurred</string>
 
     <!--permission request-->
-    <string name="permission_denied_dialog_title">İzin Verilmedi</string>
-    <string name="permission_denied_dialog_description">Devam etmek için izin vermelisiniz.</string>
-    <string name="request_permission">İzin ver</string>
-    <string name="ok_text">Tamam</string>
+    <string name="permission_denied_dialog_title">Not Allowed</string>
+    <string name="permission_denied_dialog_description">You must give permission to continue.</string>
+    <string name="request_permission">Allow</string>
+    <string name="ok_text">Okey</string>
 
     <!--navigation component-->
-    <string name="qr_scanner_fragment_label">Kod Tara</string>
-    <string name="settings_fragment_label">Ayarlar</string>
-    <string name="result_fragment_label">Tara</string>
-    <string name="history_fragment_label">Geçmiş</string>
-    <string name="favorites_fragment_label">Sık Kullanılanlar</string>
+    <string name="qr_scanner_fragment_label">Scan</string>
+    <string name="settings_fragment_label">Settings</string>
+    <string name="result_fragment_label">Scan Result</string>
+    <string name="history_fragment_label">History</string>
+    <string name="favorites_fragment_label">Favorites</string>
 
     <!--navigation drawer-->
-    <string name="navigation_drawer_scanner_page_item_title">Tara</string>
-    <string name="navigation_drawer_settings_page_item_title">Ayarlar</string>
-    <string name="navigation_drawer_history_page_item_title">Geçmiş</string>
-    <string name="navigation_drawer_favorites_page_item_title">Sık Kullanılanlar</string>
-    <string name="navigation_drawer_open">Menü açıldı</string>
-    <string name="navigation_drawer_close">Menü kapatıldı</string>
+    <string name="navigation_drawer_scanner_page_item_title">Scan</string>
+    <string name="navigation_drawer_settings_page_item_title">Settings</string>
+    <string name="navigation_drawer_history_page_item_title">History</string>
+    <string name="navigation_drawer_favorites_page_item_title">Favorites</string>
+    <string name="navigation_drawer_open">Menu opened</string>
+    <string name="navigation_drawer_close">Menu closed</string>
 
     <!--resultFragment-->
     <string name="result_fragment_url_type_text">URL</string>
-    <string name="result_fragment_barcode_type_text">Barkod</string>
+    <string name="result_fragment_barcode_type_text">Barcode</string>
     <string name="result_fragment_qr_type_text">QR</string>
-    <string name="result_fragment_text_type_text">Düz Metin</string>
+    <string name="result_fragment_text_type_text">Text</string>
 
     <!--settingsFragment-->
-    <string name="settings_fragment_beep_enable_label">Beep Aç/Kapa</string>
-    <string name="settings_fragment_vibrator_enable_label">Titreşim Aç/Kapa</string>
-    <string name="settings_fragment_auto_web_open_enable_label">Otomatik Web Sayfası Açılma Aç/Kapa</string>
+    <string name="settings_fragment_beep_enable_label">Beep Open/Close</string>
+    <string name="settings_fragment_vibrator_enable_label">Vibration Enable/Disable</string>
+    <string name="settings_fragment_auto_web_open_enable_label">Automatic Web Page Open Enable/Disable</string>
 
     <!--barcodeScannerFragment-->
-    <string name="barcode_scanner_fragment_select_picture">Resim Seç</string>
+    <string name="barcode_scanner_fragment_select_picture">Select Picture</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

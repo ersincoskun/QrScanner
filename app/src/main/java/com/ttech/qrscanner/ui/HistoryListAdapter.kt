@@ -10,6 +10,7 @@ import com.ttech.qrscanner.R
 import com.ttech.qrscanner.data.QrCodeResultData
 import com.ttech.qrscanner.databinding.ItemQrResultListBinding
 import com.ttech.qrscanner.utils.onSingleClickListener
+import com.ttech.qrscanner.utils.show
 
 class HistoryListAdapter(private val context: Context, private val rootItemClick: (Long?) -> Unit, private val favoriteButtonClick: (Long?,Boolean) -> Unit) :
     ListAdapter<QrCodeResultData, HistoryListAdapter.HistoryListViewHolder>(HistoryListDiffUtil()) {
@@ -41,13 +42,14 @@ class HistoryListAdapter(private val context: Context, private val rootItemClick
                 }
 
                 else -> {
-                    ivQrResultLogo.setImageResource(R.drawable.go_gallery_icon)
+                    ivQrResultLogo.setImageResource(R.drawable.barcode_icon)
                     tvQrResultType.text = context.getString(R.string.result_fragment_barcode_type_text)
                 }
             }
             llItemQrResultRoot.onSingleClickListener {
                 rootItemClick(item.primaryId)
             }
+            ivAddFavorite.show()
             if (item.isFavorite) ivAddFavorite.setImageResource(R.drawable.star_filled_icon)
             else ivAddFavorite.setImageResource(R.drawable.star_empty_icon)
             ivAddFavorite.onSingleClickListener {

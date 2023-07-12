@@ -10,6 +10,7 @@ import com.ttech.qrscanner.R
 import com.ttech.qrscanner.data.QrCodeResultData
 import com.ttech.qrscanner.databinding.ItemQrResultListBinding
 import com.ttech.qrscanner.utils.onSingleClickListener
+import com.ttech.qrscanner.utils.remove
 
 class FavoriteListAdapter(private val context: Context, private val rootItemClick: (Long?) -> Unit) :
     ListAdapter<QrCodeResultData, FavoriteListAdapter.FavoriteListViewHolder>(FavoriteListDiffUtil()) {
@@ -28,6 +29,7 @@ class FavoriteListAdapter(private val context: Context, private val rootItemClic
             val item = getItem(position)
             tvQrResultData.text = item.result
             tvQrResultDate.text = item.date
+            ivAddFavorite.remove()
             when {
                 item.isUrl -> {
                     val context = tvQrResultType.context
@@ -41,7 +43,7 @@ class FavoriteListAdapter(private val context: Context, private val rootItemClic
                 }
 
                 else -> {
-                    ivQrResultLogo.setImageResource(R.drawable.go_gallery_icon)
+                    ivQrResultLogo.setImageResource(R.drawable.barcode_icon)
                     tvQrResultType.text = context.getString(R.string.result_fragment_barcode_type_text)
                 }
             }

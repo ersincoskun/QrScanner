@@ -3,12 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigation"
-    app:startDestination="@id/barcodeScannerFragment">
+    app:startDestination="@id/splashFragment">
 
     <fragment
         android:id="@+id/barcodeScannerFragment"
         android:name="com.ttech.qrscanner.ui.BarcodeScannerFragment"
-        android:label="@string/qr_scanner_fragment_label" >
+        android:label="@string/qr_scanner_fragment_label">
         <action
             android:id="@+id/action_barcodeScannerFragment_to_resultFragment"
             app:destination="@id/resultFragment"
@@ -57,5 +57,16 @@
         <argument
             android:name="id"
             app:argType="long" />
+    </fragment>
+    <fragment
+        android:id="@+id/splashFragment"
+        android:name="com.ttech.qrscanner.ui.SplashFragment"
+        android:label="fragment_splash"
+        tools:layout="@layout/fragment_splash">
+        <action
+            android:id="@+id/action_splashFragment_to_barcodeScannerFragment"
+            app:destination="@id/barcodeScannerFragment"
+            app:popUpToInclusive="true"
+            app:popUpTo="@id/splashFragment" />
     </fragment>
 </navigation>
